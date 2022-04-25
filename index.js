@@ -4,6 +4,8 @@ const bindActionCreators = redux.bindActionCreators
 
 const BOOK_ORDERED = 'BOOK_ORDERED'
 const BOOK_RESTOCK = 'BOOK_RESTOCK'
+const BOOKMARK_ORDERED = 'BOOKMARK_ORDERED'
+const BOOKMARK_RESTOCKED = 'BOOKMARK_RESTOCKED'
 
 const orderBook = () => {
   return {
@@ -19,38 +21,82 @@ const restockBook = (qty) => {
   }
 }
 
-const initialStale = {
+const buyBookMark = (qty) => {
+  return {
+    type: BOOKMARK_ORDERED,
+    payload: qty,
+  }
+}
+
+const restockBookMark = (qty) => {
+  return {
+    type: BOOKMARK_RESTOCKED,
+    payload: qty,
+  }
+}
+
+const bookInitialState = {
   noOfBooks: 10,
 }
 
-const reducer = (state = initialStale, action) => {
+const bookmarkInitialState = {
+  noOfBookMark: 50,
+}
+
+const bookReducer = (state = bookInitialState, action) => {
   switch (action.type) {
     case BOOK_ORDERED:
       return { ...state, noOfBooks: state.noOfBooks - 1 }
-    case restockBook: {
+    case BOOK_RESTOCK:
       return { ...state, noOfBooks: state.noOfBooks + action.payload }
-    }
+
     default:
       return state
   }
 }
 
-const store = createStore(reducer)
-console.log('initial state', store.getState())
-const unsubscribe = store.subscribe(() =>
-  console.log('updated state', store.getState())
-)
+const bookMarkReducer = (state = bookmarkInitialState, action) => {
+  switch (action.type) {
+    case BOOKMARK_ORDERED:
+      return {
+        ...state,
+        noOfBookMark: state.noOfBookMark - 1,
+      }
+
+    case BOOKMARK_RESTOCKED:
+      return {
+        ...state,
+        noOfBookMark: state.noOfBookMark + action.payload,
+      }
+    default:
+      return state
+  }
+}
+
+const rootReducer = redux.combineReducers({
+  books: bookReducer,
+  bookMark: bookMarkReducer,
+})
 
 // store.dispatch(orderBook())
 // store.dispatch(orderBook())
 // store.dispatch(orderBook())
 
 // store.dispatch(restockBook(90))
-const actions = bindActionCreators({ orderBook, restockBook }, store.dispatch)
+// const actions = bindActionCreators({ orderBook, restockBook }, store.dispatch)
 
-actions.orderBook()
-actions.orderBook()
-actions.orderBook()
-actions.restockBook(56)
+const store = createStore(rootReducer)
+console.log('initial state', store.getState())
+const unsubscribe = store.subscribe(() =>
+  console.log('updated state', store.getState())
+)
+
+store.dispatch(orderBook())
+store.dispatch(orderBook())
+store.dispatch(restockBook(10))
+store.dispatch(buyBookMark())
+store.dispatch(buyBookMark())
+store.dispatch(buyBookMark())
+store.dispatch(restockBookMark(50))
 
 unsubscribe()
