@@ -1,6 +1,10 @@
 const redux = require('redux')
+const applyMiddleware = redux.applyMiddleware
 const createStore = redux.createStore
 const bindActionCreators = redux.bindActionCreators
+const produce = require('immer').produce
+const reduxLogger = require('redux-logger')
+const logger = reduxLogger.createLogger()
 
 const BOOK_ORDERED = 'BOOK_ORDERED'
 const BOOK_RESTOCK = 'BOOK_RESTOCK'
@@ -85,11 +89,11 @@ const rootReducer = redux.combineReducers({
 // store.dispatch(restockBook(90))
 // const actions = bindActionCreators({ orderBook, restockBook }, store.dispatch)
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer, applyMiddleware(logger))
 console.log('initial state', store.getState())
-const unsubscribe = store.subscribe(() =>
-  console.log('updated state', store.getState())
-)
+const unsubscribe = store.subscribe(() => {
+  // console.log('updated state', store.getState())
+})
 
 store.dispatch(orderBook())
 store.dispatch(orderBook())
