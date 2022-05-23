@@ -1,2 +1,2 @@
 # redux-sessions
-practise session of redux/redux toolkit/ react redux toolkit
+practise session of redux/redux toolkit/ react redux toolkit  / react toolkit project
